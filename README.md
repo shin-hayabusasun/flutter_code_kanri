@@ -1,16 +1,30 @@
 # test
 
-A new Flutter project.
+このプロジェクトは、FlutterとSQLite3を使ったシンプルなコード管理アプリです。
 
-## Getting Started
+## 概要
 
-This project is a starting point for a Flutter application.
+- ユーザーが「追加」ボタンを押すと、`file` テーブルに新しいレコード（タイトル付き）が追加されます。
+- データベース（file.db）はWindowsの「ドキュメント」フォルダ（例: `C:\Users\ユーザー名\Documents\file.db`）に保存されます。
+- アプリ起動時にDBが初期化され、既存データは保持されます（テーブルがなければ作成）。
+- 画面にはID=1のファイルタイトルが表示されます。
 
-A few resources to get you started if this is your first Flutter project:
+## 主なファイル
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- `lib/main.dart`  
+  アプリのエントリーポイント。UIとボタン、DB操作の呼び出しを担当。
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- `lib/db/db.dart`  
+  SQLite3を使ったDBヘルパークラス。初期化、挿入、取得、更新などのメソッドを提供。
+
+## 使い方
+
+1. 必要なパッケージ（`sqlite3`, `path` など）をインストールしてください。
+2. アプリを起動すると、DBが自動的に初期化されます。
+3. 「追加」ボタンで新しいファイルタイトルをDBに保存できます。
+4. 画面にはID=1のファイルタイトルが表示されます。
+
+## 注意
+
+- データベースファイルはユーザーのドキュメントフォルダに保存されます。
+- データを消したくない場合は、file.dbを削除しないでください。
