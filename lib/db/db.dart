@@ -25,6 +25,11 @@ class DBHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT
       );
+      CREATE TABLE IF NOT EXISTS code (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT
+        fileid INTEGER
+      );
     ''');
   }
 
@@ -57,5 +62,17 @@ class DBHelper {
     stmt.execute([title, id]);
     stmt.dispose();
     return _db.getUpdatedRows();
+  }
+
+  static int insertCode(String title, int fileid) {
+    final stmt = _db.prepare('INSERT INTO code (title, fileid) VALUES (?, ?);');
+    stmt.execute([title, fileid]);
+    stmt.dispose();
+    return _db.getUpdatedRows();
+  }
+
+  static Future<List<Map<String, dynamic>?>> getCode(int fileid) async {
+    final result = _db.select('SELECT * FROM code WHERE fileid = ?;', [fileid]);
+    return result.map((row) => Map<String, dynamic>.from(row)).toList();
   }
 }
