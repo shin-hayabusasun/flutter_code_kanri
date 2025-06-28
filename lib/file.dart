@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import './db/db.dart';
+import 'package:go_router/go_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //Flutterアプリで非同期処理（async/await）やプラットフォームチャネルを使う前に、Flutterエンジンとウィジェットバインディングを初期化するためのものです。
@@ -12,10 +13,11 @@ void main() async {
 
 // アプリのエントリーポイント file home
 
-void gocode(int id) {
+void gocode(BuildContext context, int id) {
   // ここでファイルを開く処理を実装
   // idを使ってDBからファイルの内容を取得し、表示するなどの処理を行う
   print('ファイルID: $id を開きます');
+  context.go('/code?id=$id'); // ここでファイルを開く処理を実装
 }
 
 class File extends StatelessWidget {
@@ -90,7 +92,7 @@ class Filepage extends ConsumerWidget {
                       .map(
                         (file) => ElevatedButton(
                           onPressed: () {
-                            gocode(file!['id']); // ファイルを開く処理を呼び出す
+                            gocode(context, file!['id']); // ファイルを開く処理を呼び出す
                           },
                           child: Text('タイトル: ${file!['title']}'),
                         ),

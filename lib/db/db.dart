@@ -27,8 +27,9 @@ class DBHelper {
       );
       CREATE TABLE IF NOT EXISTS code (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT
-        fileid INTEGER
+        title TEXT    ,
+        fileid INTEGER,
+        desprite TEXT
       );
     ''');
   }
@@ -74,5 +75,10 @@ class DBHelper {
   static Future<List<Map<String, dynamic>?>> getCode(int fileid) async {
     final result = _db.select('SELECT * FROM code WHERE fileid = ?;', [fileid]);
     return result.map((row) => Map<String, dynamic>.from(row)).toList();
+  }
+
+  static Future<Map<String, dynamic>?> getOneCode(int id) async {
+    final result = _db.select('SELECT * FROM code WHERE id = ?;', [id]);
+    return Map<String, dynamic>.from(result.first);
   }
 }
