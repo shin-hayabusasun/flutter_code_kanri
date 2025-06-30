@@ -17,7 +17,7 @@ void gocode(BuildContext context, int id) {
   // ここでファイルを開く処理を実装
   // idを使ってDBからファイルの内容を取得し、表示するなどの処理を行う
   print('コードID: $id を開きます');
-  context.go('/onecode?id=$id');
+  context.push('/onecode?id=$id');
 }
 
 //  const Code({super.key,this.id});によってProviderScope(child: Code(id));ができるようになる
@@ -64,18 +64,38 @@ class Codepage extends ConsumerWidget {
 
     // コントローラ
 
-    final inputController = TextEditingController();
-    final input = TextField(
-      controller: inputController,
+    final input2Controller = TextEditingController(); // 入力フィールドのコントローラーを作成
+    final input2 = TextField(
+      controller: input2Controller,
       decoration: InputDecoration(
-        labelText: 'コードを入力',
+        labelText: 'コードタイトルを入力',
         border: OutlineInputBorder(),
+      ),
+    );
+
+    final inputController = TextEditingController();
+
+    final input = SizedBox(
+      height: 200,
+      child: TextField(
+        maxLines: null, // 複数行入力を可能にする
+        expands: true, // 入力フィールドの高さを自動調整
+        controller: inputController,
+        decoration: InputDecoration(
+          labelText: 'コードを入力',
+          border: OutlineInputBorder(),
+        ),
+        scrollPhysics: BouncingScrollPhysics(),
       ),
     );
 
     final butoon = ElevatedButton(
       onPressed: () async {
-        await DBHelper.insertCode(inputController.text, id!);
+        await DBHelper.insertCode(
+          inputController.text,
+          id!,
+          input2Controller.text,
+        );
 
         ref.refresh(fileProvider(id!));
       },
@@ -88,10 +108,46 @@ class Codepage extends ConsumerWidget {
       ),
     );
 
+    final butoon1 = ElevatedButton(
+      onPressed: () async {
+        await DBHelper.deleteCode(id!); // idを使ってコードを削除
+        ref.refresh(fileProvider(id!)); // データを更新するためにプロバイダーをリフレッシュ
+        context.pop(); // 前の画面に戻る
+      },
+      child: Text('フォルダを消去'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 83, 83, 83),
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.all(16.0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+      ),
+    );
+
     final alll = Column(children: []);
+    final row = Row(
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            context.pop(); // ここでファイルを開く処理を実装
+          },
+          child: Text('戻る'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 83, 83, 83),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.all(16.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+        ),
+        butoon1,
+      ],
+    );
 
     final col = Column(
       children: [
+        row,
+        input2,
         input,
         butoon,
         fileList.when(

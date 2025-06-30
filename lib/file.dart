@@ -17,7 +17,7 @@ void gocode(BuildContext context, int id) {
   // ここでファイルを開く処理を実装
   // idを使ってDBからファイルの内容を取得し、表示するなどの処理を行う
   print('ファイルID: $id を開きます');
-  context.go('/code?id=$id'); // ここでファイルを開く処理を実装
+  context.push('/code?id=$id'); // ここでファイルを開く処理を実装
 }
 
 class File extends StatelessWidget {

@@ -65,9 +65,11 @@ class DBHelper {
     return _db.getUpdatedRows();
   }
 
-  static int insertCode(String title, int fileid) {
-    final stmt = _db.prepare('INSERT INTO code (title, fileid) VALUES (?, ?);');
-    stmt.execute([title, fileid]);
+  static int insertCode(String title, int fileid, String desprite) {
+    final stmt = _db.prepare(
+      'INSERT INTO code (title, fileid, desprite) VALUES (?, ?, ?);',
+    );
+    stmt.execute([title, fileid, desprite]);
     stmt.dispose();
     return _db.getUpdatedRows();
   }
@@ -80,5 +82,21 @@ class DBHelper {
   static Future<Map<String, dynamic>?> getOneCode(int id) async {
     final result = _db.select('SELECT * FROM code WHERE id = ?;', [id]);
     return Map<String, dynamic>.from(result.first);
+  }
+
+  static int updateCode(int id, String title, String desprite) {
+    final stmt = _db.prepare(
+      'UPDATE code SET title = ?, desprite = ? WHERE id = ?;',
+    );
+    stmt.execute([title, desprite, id]);
+    stmt.dispose();
+    return _db.getUpdatedRows();
+  }
+
+  static int deleteCode(int id) {
+    final stmt = _db.prepare('DELETE FROM code WHERE id = ?;');
+    stmt.execute([id]);
+    stmt.dispose();
+    return _db.getUpdatedRows();
   }
 }
