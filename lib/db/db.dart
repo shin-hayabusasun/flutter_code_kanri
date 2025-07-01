@@ -99,4 +99,18 @@ class DBHelper {
     stmt.dispose();
     return _db.getUpdatedRows();
   }
+
+  static int deleteFile(int id) {
+    // まずcodeテーブルの関連データを削除
+    final stmtCode = _db.prepare('DELETE FROM code WHERE fileid = ?;');
+    stmtCode.execute([id]);
+    stmtCode.dispose();
+
+    // 次にfileテーブルのデータを削除
+    final stmtFile = _db.prepare('DELETE FROM file WHERE id = ?;');
+    stmtFile.execute([id]);
+    stmtFile.dispose();
+
+    return _db.getUpdatedRows();
+  }
 }

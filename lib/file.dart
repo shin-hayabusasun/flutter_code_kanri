@@ -53,28 +53,54 @@ class Filepage extends ConsumerWidget {
 
     final inputController = TextEditingController(); // 入力フィールドのコントローラーを作成
     final input = TextField(
-      controller: inputController, // コントローラーを設定
+      controller: inputController,
       decoration: InputDecoration(
-        labelText: 'コードを入力',
-        border: OutlineInputBorder(),
+        labelText: 'タイトルを入力',
+        prefixIcon: Icon(Icons.edit, color: Colors.deepPurple),
+        filled: true,
+        fillColor: Colors.deepPurple.withOpacity(0.05),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.0),
+          borderSide: BorderSide(color: Colors.deepPurple),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.0),
+          borderSide: BorderSide(color: Colors.deepPurple),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.0),
+          borderSide: BorderSide(color: Colors.deepPurple, width: 2),
+        ),
+        contentPadding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
       ),
+      style: TextStyle(fontSize: 18),
     );
 
-    final butoon = ElevatedButton(
-      onPressed: () async {
-        await DBHelper.insertFile(
-          inputController.text,
-        ); //staticメソッドなのでDBHelper.で呼び出す.
-
-        ref.refresh(fileProvider); // データを更新するためにプロバイダーをリフレッシュ
-        // ここでDBからデータを取得して表示する処理を実行
-      },
-      child: Text('追加'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromARGB(255, 83, 83, 83),
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.all(16.0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+    final butoon = SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: () async {
+          await DBHelper.insertFile(inputController.text);
+          ref.refresh(fileProvider);
+        },
+        icon: Icon(Icons.add, color: Colors.white),
+        label: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            '追加',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.deepPurple,
+          foregroundColor: Colors.white,
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          shadowColor: Colors.deepPurpleAccent,
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+        ),
       ),
     );
 
@@ -83,21 +109,45 @@ class Filepage extends ConsumerWidget {
     final col = Column(
       children: [
         input,
+        SizedBox(height: 16),
         butoon,
+        SizedBox(height: 24),
         fileList.when(
           data: (files) => files != null && files.isNotEmpty
-              ? Column(
-                  children: files
-                      .where((file) => file != null)
-                      .map(
-                        (file) => ElevatedButton(
-                          onPressed: () {
-                            gocode(context, file!['id']); // ファイルを開く処理を呼び出す
-                          },
-                          child: Text('タイトル: ${file!['title']}'),
+              ? SizedBox(
+                  height: 400, // 必要に応じて高さを調整
+                  child: ListView.builder(
+                    itemCount: files.length,
+                    itemBuilder: (context, index) {
+                      final file = files[index];
+                      if (file == null) return SizedBox.shrink();
+                      return Card(
+                        margin: EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 12,
                         ),
-                      )
-                      .toList(),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ListTile(
+                          leading: Icon(Icons.folder, color: Colors.deepPurple),
+                          title: Text(
+                            'タイトル: ${file['title']}',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                          onTap: () {
+                            gocode(context, file['id']);
+                          },
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 16,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 )
               : Text('データなし'),
           loading: () => CircularProgressIndicator(),

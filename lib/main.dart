@@ -52,4 +52,4 @@ class MyApp extends StatelessWidget {
   }
 }
 //エラー内容
-//ファイルを消せない。codeを消しても表示される。liistviewの更新ができない。
+//プロバイダーの名前をそれぞれ変える

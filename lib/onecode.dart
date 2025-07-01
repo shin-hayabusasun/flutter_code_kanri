@@ -79,7 +79,7 @@ class OneCodepage extends ConsumerWidget {
       onPressed: () async {
         await DBHelper.deleteCode(id!); // idを使ってコードを削除
         ref.refresh(fileProvider(id!)); // データを更新するためにプロバイダーをリフレッシュ
-        context.pop(); // 前の画面に戻る
+        context.go('/'); // 前の画面に戻る
       },
       child: Text('消去'),
       style: ElevatedButton.styleFrom(
@@ -107,7 +107,7 @@ class OneCodepage extends ConsumerWidget {
 
     final col = Column(
       children: [
-        butoon2,
+        Row(children: [butoon2, butoon1]),
         fileList.when(
           data: (data) {
             if (data == null) {
@@ -137,7 +137,6 @@ class OneCodepage extends ConsumerWidget {
           loading: () => CircularProgressIndicator(),
           error: (error, stack) => Text('エラー: $error'),
         ),
-        butoon1,
       ],
     );
 

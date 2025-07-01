@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import './db/db.dart';
 import 'package:go_router/go_router.dart';
+import './file.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -110,9 +111,11 @@ class Codepage extends ConsumerWidget {
 
     final butoon1 = ElevatedButton(
       onPressed: () async {
-        await DBHelper.deleteCode(id!); // idを使ってコードを削除
+        await DBHelper.deleteFile(id!); // idを使ってコードを削除
+        // ref.refresh(fileProvider);
         ref.refresh(fileProvider(id!)); // データを更新するためにプロバイダーをリフレッシュ
-        context.pop(); // 前の画面に戻る
+
+        context.go('/'); // 前の画面に戻る
       },
       child: Text('フォルダを消去'),
       style: ElevatedButton.styleFrom(
@@ -152,18 +155,43 @@ class Codepage extends ConsumerWidget {
         butoon,
         fileList.when(
           data: (files) => files != null && files.isNotEmpty
-              ? Column(
-                  children: files
-                      .where((file) => file != null)
-                      .map(
-                        (file) => ElevatedButton(
-                          onPressed: () {
-                            gocode(context, file!['id']); // ファイルを開く処理を呼び出す
-                          },
-                          child: Text('タイトル: ${file!['title']}'),
+              ? SizedBox(
+                  height: 200, // 必要に応じて高さを調整
+                  child: ListView.builder(
+                    itemCount: files.length,
+                    itemBuilder: (context, index) {
+                      final file = files[index];
+                      if (file == null) return SizedBox.shrink();
+                      return Card(
+                        margin: EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 12,
                         ),
-                      )
-                      .toList(),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.description,
+                            color: Colors.deepPurple,
+                          ),
+                          title: Text(
+                            'タイトル: ${file['title']}',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                          onTap: () {
+                            gocode(context, file['id']);
+                          },
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 16,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 )
               : Text('データなし'),
           loading: () => CircularProgressIndicator(),
