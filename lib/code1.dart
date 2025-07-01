@@ -83,7 +83,7 @@ class Codepage extends ConsumerWidget {
         expands: true, // 入力フィールドの高さを自動調整
         controller: inputController,
         decoration: InputDecoration(
-          labelText: 'コードを入力',
+          labelText: 'コードタイトルを入力',
           border: OutlineInputBorder(),
         ),
         scrollPhysics: BouncingScrollPhysics(),
@@ -93,9 +93,9 @@ class Codepage extends ConsumerWidget {
     final butoon = ElevatedButton(
       onPressed: () async {
         await DBHelper.insertCode(
-          inputController.text,
-          id!,
           input2Controller.text,
+          id!,
+          inputController.text,
         );
 
         ref.refresh(fileProvider(id!));
